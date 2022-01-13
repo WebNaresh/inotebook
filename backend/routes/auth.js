@@ -1,9 +1,8 @@
 const User = require('../models/User');
 const bcrypt = require('bcryptjs');
+const MakingWEbToken = require("../jwt/jwt")
 const { body, validationResult } = require('express-validator');
 const router = require('express').Router();
-const JWT_SECRETE = "nareshbhai";
-var jwt = require('jsonwebtoken');
 const fetchuser = require('../middleware/fetchUser');
 
 
@@ -36,16 +35,8 @@ router.post('/createuser', [
             email: req.body.email,
             password: secPass,
         })
+        MakingWEbToken(user)
 
-        const data = {
-            user: { id: user.id }
-        }
-
-        const authToken = jwt.sign(data, JWT_SECRETE);
-        console.log(authToken);
-
-
-        // Route 1 sending user
         res.json(user)
     } catch (error) {
         // Route 1 catching errors
@@ -75,13 +66,8 @@ router.post("/login", [
         if (!passwordCompare) {
             res.status(400).json({ error: "please try to login with coorect credentials" })
         }
-        const data = {
-            user: { id: user.id }
-        }
-
-        const authToken = jwt.sign(data, JWT_SECRETE);
-        console.log(authToken);
-        res.json({ authToken })
+        MakingWEbToken(user)
+        res.json({ user })
     } catch (error) {
         // Route 2 catching errors
         console.log(error);
